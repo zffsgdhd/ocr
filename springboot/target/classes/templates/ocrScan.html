@@ -1,0 +1,167 @@
+<html>
+    <head>
+        <title>OCR扫描</title>
+    </head>
+    <style>
+        .title{
+            text-align: center;
+            margin-top: 15%;
+            font-size: 40px;
+            margin-bottom: 30px;
+        }
+        .b{
+            text-align: center;
+        }
+        .btn{
+        	border: 0px;
+            font-size: 18px;
+            height: 38px;
+            width: 90px;
+            line-height: 38px;
+            color:#fff;
+            background-color: #3385ff;
+            display: inline-block;
+
+        }
+        .select{
+            height: 34px;
+            line-height: 34px;
+            font-size: 18px;
+            display: inline-block;
+        	border:1px solid #ddd;
+        }
+        .input{
+        	border:1px solid #ddd;
+            height: 34px;
+            width: 60%;
+            line-height: 34px;
+            font-size: 18px;
+            display: inline-block;
+        }
+        label{font-size: 18px;}
+        #url{
+            padding: 20px;
+            text-align: center;
+        }
+        #url label{
+            display: block;
+            padding-top:10px;
+        }
+        #url span{
+            color: #3385ff;
+        }
+    </style>
+    <body>
+        <div class="title">OCR扫描</div>
+        <div class="b">
+            <label>上传照片</label>
+            <!-- <form enctype="multipart/form-data" action="ocrimg" method="post">
+	             <input type="file" /> 
+	              <button>上传</button>
+             </form>  -->
+            <form id ="discernFile"  method="post" target="target" enctype="multipart/form-data" action="ocrimg">
+			    <input class="input" type="file" name="file" />
+            <select class="select" id="type" name="type" onchange="showback()">
+			  <option value="1">身份证识别</option>
+			  <option value="2">驾驶证识别</option>
+			  <option value="3">行驶证识别</option>
+			  <option value="4">银行卡识别</option>
+			  <option value="6">通用识别</option>
+			</select>
+			<select class="select" name="backType">
+				  <option value="1">正面</option>
+				  <option value="2">反面</option>
+				</select>
+			    <input class="btn" type="submit" value="扫描开始" />
+		    </form>
+		    
+            <!-- <div class="btn" >开始扫描</div> -->
+            <script  src="jquery.js"></script>
+        </div>
+        <div style="text-align:left; margin-left: 250px;">
+            
+        </div>
+        <div style="text-align:left; margin-left: 250px;" id="disOption" >
+	            
+        	</div>
+        <iframe name="target" id="target" frameborder="0" width="0" height="0"></iframe>
+        
+    </body>
+
+	<script>
+	function formatJson(msg) {
+		var rep = "~";
+		var jsonStr = JSON.stringify(msg, null, rep)
+		var str = "";
+		for (var i = 0; i < jsonStr.length; i++) {
+			var text2 = jsonStr.charAt(i)
+			if (i > 1) {
+				var text = jsonStr.charAt(i - 1)
+				if (rep != text && rep == text2) {
+					str += "<br/>"
+				}
+			}
+			str += text2;
+		}
+		jsonStr = "";
+		for (var i = 0; i < str.length; i++) {
+			var text = str.charAt(i);
+			if (rep == text)
+				jsonStr += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+			else {
+				jsonStr += text;
+			}
+			if (i == str.length - 2)
+				jsonStr += "<br/>"
+		}
+		return jsonStr;
+	}
+		function showback(obj){
+			if($(obj).val()==1)
+				$("[name='backType']").show();
+			else
+				$("[name='backType']").hide();
+			
+		}
+	    var iframe = document.getElementById("target");
+	    var uploadCallback = function () {
+	        $("#disOption").html(formatJson(JSON.parse(iframe.contentDocument.body.innerHTML)));
+	    };
+	    iframe.onload = uploadCallback;
+	</script>
+    <script>
+        $(".submit").click(function(){
+        	var file = $("#discernFile").val();
+            var type = $("select").val();
+            var backType = "1";
+            if(1 == type){
+            	$("#disOption").show();
+            }else{
+            	$("#disOption").hide();
+            }
+            if(file != ""){
+            	/* $.post("ocrimg",{"file":file,"type":type,"backType":backType},function(data){
+                    if(data.code==0){
+                        $("#short").text(data);
+                    }else{
+                        alert("请输入地址");
+                    }   
+                }) */
+            	$.ajax({
+            	      type: "POST",
+            	      url: "ocrimg",
+            	      enctype: 'multipart/form-data',
+            	      data: {
+            	        file: file
+            	      },
+            	      success: function () {
+            	        alert("Data Uploaded: ");
+            	      }
+            	    });
+            }else{
+            	alert("请上传图片");
+            }
+             
+        });
+    </script>
+</html>

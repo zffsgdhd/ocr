@@ -1,0 +1,77 @@
+<html>
+    <head>
+        <title>短地址转换工具</title>
+    </head>
+    <style>
+        .title{
+            text-align: center;
+            margin-top: 15%;
+            font-size: 40px;
+            margin-bottom: 30px;
+        }
+        .b{
+            text-align: center;
+        }
+        .btn{
+            font-size: 18px;
+            height: 34px;
+            width: 50px;
+            line-height: 34px;
+            color:#fff;
+            background-color: #3385ff;
+            display: inline-block;
+
+        }
+        .input{
+            height: 34px;
+            width: 60%;
+            line-height: 34px;
+            font-size: 18px;
+            display: inline-block;
+        }
+        label{font-size: 18px;}
+        #url{
+            padding: 20px;
+            text-align: center;
+        }
+        #url label{
+            display: block;
+            padding-top:10px;
+        }
+        #url span{
+            color: #3385ff;
+        }
+    </style>
+    <body>
+        <div class="title">短地址生成</div>
+        <div class="b">
+            <label>原地址</label>
+            <input class="input"/>
+            <div class="btn" >转换</div>
+            <script  src="jquery.js"></script>
+        </div>
+        <div id="url" style="display: none;">
+            <label>短地址：<span id="short"></span></label>
+            <label>原始地址：<span id="long"></span></label>
+        </div>
+    </body>
+    <script>
+        $(".btn").click(function(){
+            $("#url").hide();
+            var url = $(".input").val();
+            if(url){
+                $.post("toShort",{longUrl:url},function(data){
+                    if(data.code==0){
+                        $("#url").show();
+                        $("#short").text(data.shortUrl);
+                        $("#long").text(data.longUrl);
+                    }else{
+                        alert("请输入地址");
+                    }   
+                })
+            }else{
+                alert("请输入地址");
+            }
+        });
+    </script>
+</html>
